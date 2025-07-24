@@ -5,7 +5,12 @@ Currently based on MMseqs to carry out search and alignment.
 
 See also [MMseqs2 3D RNA Template notebook](https://www.kaggle.com/code/rhijudas/mmseqs2-3d-rna-template-identification) on Kaggle, which has the full workflow! 
 
-Requirements: `biopython`.
+Requirements:   
+1. `biopython`  
+2. `PDB_RNA/` directory holding  
+ - cif.gz or .cif files (get ID's from Advanced Search in PDB, searching for polymer entity RNA and then [batch download](https://www.rcsb.org/docs/programmatic-access/batch-downloads-with-shell-script)  
+ - `pdb_release_dates_NA.csv` (get from Advanced Search in PDB), and  
+ - `pdb_seqres_NA.fasta` (available at [link](https://files.rcsb.org/pub/pdb/derived_data/pdb_seqres.txt.gz))
 
 
 ## Example command line
@@ -20,6 +25,35 @@ python3 ../create_templates_csv.py \
 ```
 
 Output should match what is in `example/output/validation_templates.csv`
+
+## All options
+
+```
+% python3 create_templates_csv.py -h
+
+usage: create_templates_csv.py [-h] [-s SEQUENCES_FILE] [--mmseqs_results_file MMSEQS_RESULTS_FILE] [-o OUTFILE] [--max_templates MAX_TEMPLATES] [--cif_dir CIF_DIR]
+                               [--skip_temporal_cutoff] [--start_idx START_IDX] [--end_idx END_IDX] [--id_map ID_MAP]
+
+Prepare templates.csv file similar to labels.csv but with MMseqs2-identified templates
+
+options:
+  -h, --help            show this help message and exit
+  -s, --sequences_file SEQUENCES_FILE
+                        CSV file with columns including "target_id" and "sequence". Default is `test_sequences.csv`.
+  --mmseqs_results_file MMSEQS_RESULTS_FILE
+                        MMseqs output with query,target,evalue,qstart,qend,tstart,tend,qaln,taln.
+  -o, --outfile OUTFILE
+                        Name of the output CSV file. Default is `templates.csv`.
+  --max_templates MAX_TEMPLATES
+                        Maximum number of templates for target. Default is 5. Use 40 to prepare solution
+  --cif_dir CIF_DIR     Directory holding cif.gz files, pdb_release_dates_NA.csv, and pdb_seqres_NA.fasta
+  --skip_temporal_cutoff
+                        Disable tests of temporal cutoff
+  --start_idx START_IDX
+                        Start index (1,2,...) of test_sequences to work on, for parallelization. Default: 0 (do all sequences).
+  --end_idx END_IDX     End index (1,2,...) of test_sequences to work on, for parallelization. Default: 0 (do all sequences).
+  --id_map ID_MAP       CSV file with fields `orig` and `new` for mapping original target IDs to new target IDs. Default is `` (no mapping).
+```
 
 ## How to run MMseqs2
 
